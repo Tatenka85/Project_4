@@ -1,16 +1,13 @@
-import Pages.TestOrderPage;
+import org.openqa.selenium.WebDriver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-
+import pages.OrderPage;
 
 @RunWith(Parameterized.class)
 public class TestOrder {
-
 
     private final String name;
     private final String surname;
@@ -19,15 +16,13 @@ public class TestOrder {
     private final String phone;
     private final String date;
     private final String time;
-    private final By orderButtonLocator;
-
+    private final String buttonPosition;
 
     private WebDriver driver;
-    private TestOrderPage testOrderPage;
-
+    private OrderPage orderPage;
 
     // Конструктор для параметризации
-    public TestOrder(String name, String surname, String address, String station, String phone, String date, String time, By orderButtonLocator) {
+    public TestOrder(String name, String surname, String address, String station, String phone, String date, String time, String buttonPosition) {
         this.name = name;
         this.surname = surname;
         this.address = address;
@@ -35,51 +30,44 @@ public class TestOrder {
         this.phone = phone;
         this.date = date;
         this.time = time;
-        this.orderButtonLocator = orderButtonLocator;
+        this.buttonPosition = buttonPosition;
     }
-
 
     @Before
     public void before() {
-        String browserName = System.getenv(TestOrderPage.BROWSER_NAME_ENV_VARIABLE);
-        driver = WebDriverFactory.createForName(browserName != null ? browserName : TestOrderPage.DEFAULT_BROWSER_NAME);
-
-
-        testOrderPage = new TestOrderPage(name, surname, address, station, phone, date, time);
+        driver = WebDriverFactory.createForEnvironment();
+        orderPage = new OrderPage(driver);
+        orderPage.openPage();
+        orderPage.closeCookiePopup(driver); // Закрытие попапа с куками
     }
 
-
     @Parameterized.Parameters
-    public static Object[] UserData() {
+    public static Object[][] userData() {
         return new Object[][]{
-                {"Иван", "Иванов", "Москва", "Черкизовская", "89998887766", "01.01.2025", "трое суток", TestOrderPage.ORDER_BUTTON_TOP},
-                {"Алексей", "Петров", "Санкт-Петербург", "Сокольники", "89995554433", "02.02.2025", "сутки", TestOrderPage.ORDER_BUTTON_BOTTOM}
+                {"Иван", "Иванов", "Москва", "Черкизовская", "89998887766", "01.01.2025", "трое суток", "top"},
+                {"Алексей", "Петров", "Санкт-Петербург", "Сокольники", "89995554433", "02.02.2025", "сутки", "bottom"}
         };
     }
 
-
     @Test
-    public void testUserData() {
-        // Открытие страницы и закрытие модалки с cookies
-        testOrderPage.openPage(driver);
-        testOrderPage.closeCookiePopup(driver);
-
-
-        // Проверка доступности кнопки "Заказать" и клик по ней
-        driver.findElement(orderButtonLocator).click();
-
+    public void testOrderButtonClick() {
+        // Клик по нужной кнопке (верхняя или нижняя)
+        orderPage.clickOrderButton(buttonPosition);
 
         // Заполнение формы с пользовательскими данными
-        testOrderPage.fillOrderForm(driver);
-
+        orderPage.fillFormFields(name, surname, address, station, phone);
+        orderPage.submitOrderForm();
+        orderPage.fillDateAndTime(date, time);
+        orderPage.orderButtonOrderForm();
 
         // Подтверждение заказа
-        testOrderPage.confirmOrderForm(driver);
+        orderPage.confirmOrderForm();
     }
-
 
     @After
     public void after() {
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
