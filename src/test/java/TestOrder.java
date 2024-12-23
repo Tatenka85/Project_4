@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import pages.MainPage;
 import pages.OrderPage;
 
 @RunWith(Parameterized.class)
@@ -19,6 +20,7 @@ public class TestOrder {
     private final String buttonPosition;
 
     private WebDriver driver;
+    private MainPage mainPage;
     private OrderPage orderPage;
 
     // Конструктор для параметризации
@@ -36,9 +38,10 @@ public class TestOrder {
     @Before
     public void before() {
         driver = WebDriverFactory.createForEnvironment();
+        mainPage = new MainPage(driver);
         orderPage = new OrderPage(driver);
-        orderPage.openPage();
-        orderPage.closeCookiePopup(driver); // Закрытие попапа с куками
+        mainPage.openPage();
+        MainPage.closeCookiePopup(driver); // Закрытие попапа с куками
     }
 
     @Parameterized.Parameters
@@ -52,7 +55,7 @@ public class TestOrder {
     @Test
     public void testOrderButtonClick() {
         // Клик по нужной кнопке (верхняя или нижняя)
-        orderPage.clickOrderButton(buttonPosition);
+        mainPage.clickOrderButton(buttonPosition);
 
         // Заполнение формы с пользовательскими данными
         orderPage.fillFormFields(name, surname, address, station, phone);

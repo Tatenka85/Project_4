@@ -13,7 +13,6 @@ import java.time.Duration;
 public class OrderPage {
 
     // Локаторы элементов на странице
-    private static final String PAGE_URL = "https://qa-scooter.praktikum-services.ru/";//URL страницы Яндекс.Самокат
     private final By nameInput = By.xpath("//input[@placeholder='* Имя']"); // Поле для ввода имени
     private final By surnameInput = By.xpath("//input[@placeholder='* Фамилия']"); // Поле для ввода фамилии
     private final By addressInput = By.xpath("//input[@placeholder='* Адрес: куда привезти заказ']"); // Поле для ввода адреса
@@ -29,37 +28,15 @@ public class OrderPage {
     private final By statusButton = By.xpath("//button[text()='Посмотреть статус']"); // Кнопка Просмотра статуса на модалке успешного создания заказа
 
     private final WebDriver driver;
-    private final MainPage mainPage;
 
     // Конструктор, который использует WebDriverFactory для создания WebDriver
     public OrderPage(WebDriver driver) {
         this.driver = driver;
-        this.mainPage = new MainPage(driver);
-    }
-
-    // Метод для открытия страницы
-    public void openPage() {
-        driver.get(PAGE_URL);
-    }
-
-    // Метод для закрытия модалки с куками
-    public void closeCookiePopup(WebDriver driver) {
-        MainPage.closeCookiePopup(driver);
-    }
-
-    public void clickOrderButton(String position) {
-        if ("top".equals(position)) {
-            mainPage.clickOrderButtonTop();// Нажимаем на верхнюю кнопку "Заказать"
-        } else if ("bottom".equals(position)) {
-            mainPage.clickOrderButtonBottom();// Нажимаем на нижнюю кнопку "Заказать"
-        } else {
-            throw new IllegalArgumentException("Неверное значение для кнопки: " + position);
-        }
     }
 
     // Заполнение данных в форме заказа
     public void fillFormFields(String name, String surname, String address, String station, String phone) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
         wait.until(ExpectedConditions.visibilityOfElementLocated(nameInput)).sendKeys(name);
         wait.until(ExpectedConditions.visibilityOfElementLocated(surnameInput)).sendKeys(surname);
         wait.until(ExpectedConditions.visibilityOfElementLocated(addressInput)).sendKeys(address);
@@ -76,7 +53,7 @@ public class OrderPage {
 
     // Заполнение формы даты и времени
     public void fillDateAndTime(String date, String time) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
         //Заполнение даты
         WebElement dateInputElement = wait.until(ExpectedConditions.visibilityOfElementLocated(dateInput));
         dateInputElement.click();
@@ -96,17 +73,15 @@ public class OrderPage {
 
     // Клик по кнопке "Да" в модалке подтверждения
     public void confirmOrderForm() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
 
         // Подтверждаем заказ
         WebElement confirmPopupElement = wait.until(ExpectedConditions.visibilityOfElementLocated(confirmPopup));
-        /*assert confirmPopupElement.isDisplayed();*/
         Assert.assertTrue("Success popup should be visible", confirmPopupElement.isDisplayed());
         driver.findElement(yesButton).click();
 
         // Ожидаем успешного подтверждения
         WebElement successPopupElement = wait.until(ExpectedConditions.visibilityOfElementLocated(successPopup));
-        /*assert successPopupElement.isDisplayed();*/
         Assert.assertTrue("Success popup should be visible", successPopupElement.isDisplayed());
 
         // Клик по кнопке "Посмотреть статус"

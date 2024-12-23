@@ -6,7 +6,7 @@ public class WebDriverFactory {
     // Константы для работы с браузером
     private static final String BROWSER_NAME_ENV_VARIABLE = "BROWSER_NAME"; // Переменная окружения для выбора браузера
     private static final String BROWSER_NAME_SYS_PROPERTY = "browser.name"; // Системное свойство для выбора браузера
-    private static final String DEFAULT_BROWSER_NAME = "FIREFOX"; // Браузер по умолчанию
+    private static final String DEFAULT_BROWSER_NAME = "CHROME"; // Браузер по умолчанию
 
     // Метод для создания WebDriver в зависимости от имени браузера
     public static WebDriver createForName(String browserName) {

@@ -59,7 +59,7 @@ public class MainPage {
     // Метод для закрытия модалки с куками
     public static void closeCookiePopup(WebDriver driver) {
         try {
-            WebDriverWait waitForCookiePopup = new WebDriverWait(driver, Duration.ofSeconds(5));
+            WebDriverWait waitForCookiePopup = new WebDriverWait(driver, Duration.ofSeconds(3));
             WebElement cookieConsentPopup = waitForCookiePopup.until(ExpectedConditions.visibilityOfElementLocated(cookiePopup));
             if (cookieConsentPopup.isDisplayed()) {
                 WebElement closeButton = cookieConsentPopup.findElement(cookiePopupClose);
@@ -72,17 +72,28 @@ public class MainPage {
 
     // Метод для клика на кнопку "Заказать" (вверху страницы)
     public void clickOrderButtonTop() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
         WebElement orderButton = wait.until(ExpectedConditions.elementToBeClickable(ORDER_BUTTON_TOP));
         orderButton.click();
     }
 
     // Метод для клика на кнопку "Заказать" (внизу страницы)
     public void clickOrderButtonBottom() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
         WebElement orderButton = wait.until(ExpectedConditions.elementToBeClickable(ORDER_BUTTON_BOTTOM));
         orderButton.click();
     }
+
+    public void clickOrderButton(String position) {
+        if ("top".equals(position)) {
+            clickOrderButtonTop();// Нажимаем на верхнюю кнопку "Заказать"
+        } else if ("bottom".equals(position)) {
+            clickOrderButtonBottom();// Нажимаем на нижнюю кнопку "Заказать"
+        } else {
+            throw new IllegalArgumentException("Неверное значение для кнопки: " + position);
+        }
+    }
+
 
     // Метод для получения локатора вопроса по индексу
     public By getQuestionLocator(int index) {
@@ -108,14 +119,14 @@ public class MainPage {
 
     // Метод для клика по вопросу
     public void clickQuestion(int index) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
         WebElement clickableQuestion = wait.until(ExpectedConditions.elementToBeClickable(getQuestionLocator(index)));
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", clickableQuestion);
     }
 
     // Метод для получения текста ответа
     public String getAnswerText(int index) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
         WebElement answer = wait.until(ExpectedConditions.visibilityOfElementLocated(getAnswerLocator(index)));
         return answer.getText();
     }
